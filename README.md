@@ -6,7 +6,7 @@ This is a simple Pong game.
 The "Ball.lua" is a class that contains the methods of the ball in the game.\
 The "Paddle.lua" is a class that contains the methods of the paddles in the game.
 
-All methods in this class are self-explanatory.
+All methods in these class are self-explanatory.
 
 The file "push.lua" belongs to github.com/Ulydev/push and is used with the funcionality of
 focus on something in the game with a fixed resolution.
