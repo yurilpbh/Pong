@@ -4,9 +4,11 @@ push = require 'push'
 require 'Paddle'
 require 'Ball'
 
+--The size of the window, but it's resizable
 WINDOW_HEIGHT = 720 
 WINDOW_WIDTH = 1280
 
+--The size of virtual windows to do a focus 
 VIRTUAL_WIDTH = 432
 VIRTUAL_HEIGHT = 243
 
@@ -30,7 +32,6 @@ function love.load()
     smallFont = love.graphics.newFont('font.TTF', 8)
     --Draw the same font, but using a big scale
     scoreFont = love.graphics.newFont('font.TTF', 32)
-
     victoryFont = love.graphics.newFont('font.TTF', 24)
 
     sounds = {
@@ -39,25 +40,20 @@ function love.load()
         ['wall_hit'] = love.audio.newSource('wall_hit.wav', 'static')
     }
     --Initialize our virutal resolution, which will be rendered within our
-    --actual window no matter its dimensions; replaces our love.window.setMode call
-    --from the last example
+    --actual window no matter its dimensions
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
-        fullscreen = false,
-        vsync = true,
-        resizable = true
-    })
+        fullscreen = false, vsync = true, resizable = true})
 
-    --Initialize score variable, used for rendering on the screen and keeping
-    -- track of the winner
+    --Initialize variables
     player1Score = 0
     player2Score = 0
-
     servingPlayer = math.random(2) == 1 and 1 or 2
     winningPLayer = 0
 
-    --Paddle positions on the Y axis (they can only move up or down)
+    --Create the paddles (they can only move up or down)
     paddle1 = Paddle(5, 20, 5, 20)
     paddle2 = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 30, 5, 20)
+    --Create the ball
     ball = Ball(VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, 4, 4)
 
     if servingPlayer == 1 then
@@ -69,22 +65,32 @@ function love.load()
     gameState = 'start'
 end
 
+--[[
+    Runs when the players resize the window
+]]
 function love.resize(w, h)
     push:resize(w, h)
 end
 
+--[[
+    Runs each dt interval over and over again
+]]
 function love.update(dt)
     if gameState == 'play' then
-        ball:update(dt)
-        
+        ball:update(dt) --Update the ball position
+        --Update the paddles position
+        paddle1:update(dt)
+        paddle2:update(dt)
+
+        --Check colisions betwenn ball and paddles
         if ball:collides(paddle1) then
             --deflect ball to the right
-            ball.dx = -ball.dx * 1.03
+            ball.dx = -ball.dx * 1.05 --Increase the speed each time
             ball.x = paddle1.x + 5
 
             sounds['paddle_hit']:play()
 
-            if ball.dy < 0 then
+            if ball.dy < 0 then --Assign a random value to Y movement of the ball
                 ball.dy = -math.random(10, 150)
             else
                 ball.dy = math.random(10, 150)
@@ -114,6 +120,7 @@ function love.update(dt)
         end
 
         if ball.y >= VIRTUAL_HEIGHT - 4 then
+            --Deflect the ball up
             ball.dy = -ball.dy
             ball.y = VIRTUAL_HEIGHT - 4
 
@@ -121,6 +128,7 @@ function love.update(dt)
         end
 
         if ball.x <= 0 then
+            --Player1 lose the ball
             player2Score = player2Score + 1
             servingPlayer = 1
 
@@ -137,6 +145,7 @@ function love.update(dt)
         end
 
         if ball.x >= VIRTUAL_WIDTH - 4 then
+            --Player2 lose the ball
             player1Score = player1Score + 1
             servingPlayer = 2
 
@@ -152,15 +161,12 @@ function love.update(dt)
             end
         end
 
-        paddle1:update(dt)
-        paddle2:update(dt)
-
         --Player1 movement
         if love.keyboard.isDown('w') then
-            --Add negative paddle speed to current Y scaled by deltaTime
+            --Add negative paddle speed
             paddle1.dy = -PADDLE_SPEED
         elseif love.keyboard.isDown('s') then
-            --Add positive paddle speed to current Y scaled by deltaTime
+            --Add positive paddle speed
             paddle1.dy = PADDLE_SPEED
         else
             paddle1.dy = 0
@@ -187,6 +193,7 @@ function love.keypressed(key)
         --Funciton LOVE gives us to terminate application
         love.event.quit()
     elseif key == 'enter' or key == 'return' then
+        --Change the gameState
         if gameState == 'start' then
             gameState = 'serve'
         elseif gameState == 'victory' then
@@ -202,23 +209,18 @@ end
 --[[
     Called after updated by LOVE, used to draw anything to the screen, updated or otherwise.
 ]]
-
 function love.draw()
     --Begin rendering at virtual resolution
     push:apply('start')
 
+    --Change the collor of the background
     love.graphics.clear(40 / 255, 45 / 255, 52 / 255, 255 / 255)
     
-    --Render ball
-    ball:render()
+    ball:render() --Render ball
+    paddle1:render() --Render first paddle (left side)
+    paddle2:render() --Render second paddle (right side)
 
-    --Render first paddle (left side)
-    paddle1:render()
-
-    --Render second paddle (right side)
-    paddle2:render()
-
-    love.graphics.setFont(smallFont)
+    love.graphics.setFont(smallFont) --Set a font to the next text
 
     if gameState == 'start' then
         love.graphics.printf("Welcome to Pong!", 0, 20, VIRTUAL_WIDTH, 'center')
