@@ -2,6 +2,7 @@ This project was developed following the class of CS50, Harvad University, by Co
 The link to the class is: https://cs50.harvard.edu/x/2020/tracks/games/
 
 This is a simple Pong game.
+![](Pong.gif)
 
 The "Ball.lua" is a class that contains the methods of the ball in the game.\
 The "Paddle.lua" is a class that contains the methods of the paddles in the game.
