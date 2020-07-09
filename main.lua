@@ -3,6 +3,7 @@ push = require 'push'
 
 require 'Paddle'
 require 'Ball'
+require 'PaddleIA'
 
 --The size of the window, but it's resizable
 WINDOW_HEIGHT = 720 
@@ -52,7 +53,7 @@ function love.load()
 
     --Create the paddles (they can only move up or down)
     paddle1 = Paddle(5, 20, 5, 20)
-    paddle2 = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 30, 5, 20)
+    paddle2 = PaddleIA(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 30, 5, 20, PADDLE_SPEED)
     --Create the ball
     ball = Ball(VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, 4, 4)
 
@@ -80,7 +81,7 @@ function love.update(dt)
         ball:update(dt) --Update the ball position
         --Update the paddles position
         paddle1:update(dt)
-        paddle2:update(dt)
+        paddle2:update(dt, ball)
 
         --Check colisions betwenn ball and paddles
         if ball:collides(paddle1) then
@@ -172,7 +173,7 @@ function love.update(dt)
             paddle1.dy = 0
         end
         
-        --Player2 movement
+        --[[Player2 movement
         if love.keyboard.isDown('up') then
             paddle2.dy = -PADDLE_SPEED
         elseif love.keyboard.isDown('down') then
@@ -180,7 +181,7 @@ function love.update(dt)
         else
             paddle2.dy = 0
         end
-    
+        ]]
     end
 end
 
@@ -248,6 +249,6 @@ end
 function displayFPS()
     love.graphics.setColor(0, 1, 0, 1)
     love.graphics.setFont(smallFont)
-    love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 40, 20)
+    love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 40, 10)
     love.graphics.setColor(1, 1, 1, 1)
 end
