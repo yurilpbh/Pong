@@ -44,15 +44,15 @@ function decision(ball, paddle)
 end
 
 function updateW(ball, paddle)
-    if paddle.y <= ball.y and paddle.y + paddle.height >= ball.y + ball.height then
-        targeto1 = 1
-        targeto2 = 1
-    elseif paddle.y > ball.y + ball.height then
-        targeto1 = -1
-        targeto2 = 1
-    else
+    if paddle.y + (2/3)*paddle.height < ball.y then --The paddle should go down
         targeto1 = 1
         targeto2 = -1
+    elseif paddle.y + paddle.height/3 > ball.y + ball.height then --The paddle should go up
+        targeto1 = -1
+        targeto2 = 1
+    else --The paddle should stay
+        targeto1 = 1
+        targeto2 = 1
     end
     w11 = w11 + learningRate * (targeto1 - o1) * ball.x
     w21 = w21 + learningRate * (targeto1 - o1) * ball.y
