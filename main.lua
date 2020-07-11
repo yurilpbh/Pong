@@ -52,8 +52,10 @@ function love.load()
     winningPLayer = 0
 
     --Create the paddles (they can only move up or down)
-    paddle1 = Paddle(5, 20, 5, 20)
-    paddle2 = PaddleIA(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 30, 5, 20, PADDLE_SPEED)
+    paddle1 = PaddleIA(5, 20, 5, 20, PADDLE_SPEED, 0.80)
+    paddle2 = PaddleIA(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 30, 5, 20, PADDLE_SPEED, 1.20)
+    paddle1:save("paddle1Weigths.lua")
+    paddle2:save("paddle2Weigths.lua")
     --Create the ball
     ball = Ball(VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, 4, 4)
 
@@ -80,7 +82,7 @@ function love.update(dt)
     if gameState == 'play' then
         ball:update(dt) --Update the ball position
         --Update the paddles position
-        paddle1:update(dt)
+        paddle1:update(dt, ball)
         paddle2:update(dt, ball)
 
         --Check colisions betwenn ball and paddles
@@ -89,7 +91,7 @@ function love.update(dt)
             ball.dx = -ball.dx * 1.05 --Increase the speed each time
             ball.x = paddle1.x + 5
 
-            sounds['paddle_hit']:play()
+            --sounds['paddle_hit']:play()
 
             if ball.dy < 0 then --Assign a random value to Y movement of the ball
                 ball.dy = -math.random(10, 150)
@@ -103,7 +105,7 @@ function love.update(dt)
             ball.dx = -ball.dx * 1.03
             ball.x = paddle2.x - 4
 
-            sounds['paddle_hit']:play()
+            --sounds['paddle_hit']:play()
 
             if ball.dy < 0 then
                 ball.dy = -math.random(10, 150)
@@ -117,7 +119,7 @@ function love.update(dt)
             ball.dy = -ball.dy
             ball.y = 0
 
-            sounds['wall_hit']:play()
+            --sounds['wall_hit']:play()
         end
 
         if ball.y >= VIRTUAL_HEIGHT - 4 then
@@ -125,7 +127,7 @@ function love.update(dt)
             ball.dy = -ball.dy
             ball.y = VIRTUAL_HEIGHT - 4
 
-            sounds['wall_hit']:play()
+            --sounds['wall_hit']:play()
         end
 
         if ball.x <= 0 then
@@ -133,15 +135,18 @@ function love.update(dt)
             player2Score = player2Score + 1
             servingPlayer = 1
 
-            sounds['point_score']:play()
-            
+            --sounds['point_score']:play()
+            if (player1Score + player2Score)%10 == 0 then
+                paddle1:save("paddle1Weigths.lua")
+                paddle2:save("paddle2Weigths.lua")
+            end
             ball:reset()
             ball.dx = 100
-            if player2Score >= 3 then
+            if player2Score >= 60 then
                 gameState = 'victory'
                 winningPLayer = 2
             else
-                gameState = 'serve'
+                --gameState = 'serve'
             end
         end
 
@@ -150,19 +155,29 @@ function love.update(dt)
             player1Score = player1Score + 1
             servingPlayer = 2
 
-            sounds['point_score']:play()
-
+            --sounds['point_score']:play()
+            if (player1Score + player2Score)%10 == 0 then
+                paddle1:save("paddle1Weigths.lua")
+                paddle2:save("paddle2Weigths.lua")
+            end
             ball:reset()
             ball.dx = -100
-            if player1Score >= 10 then
+            if player1Score >= 60 then
                 gameState = 'victory'
                 winningPLayer = 1
             else
-                gameState = 'serve'
+                --gameState = 'serve'
             end
         end
 
-        --Player1 movement
+        if player1Score == 30 then
+            paddle1:changeLR(0.01)
+        end
+        if player2Score == 30 then
+            paddle2:changeLR(0.01)
+        end
+
+        --[[Player1 movement
         if love.keyboard.isDown('w') then
             --Add negative paddle speed
             paddle1.dy = -PADDLE_SPEED
@@ -172,7 +187,7 @@ function love.update(dt)
         else
             paddle1.dy = 0
         end
-        
+        ]]
         --[[Player2 movement
         if love.keyboard.isDown('up') then
             paddle2.dy = -PADDLE_SPEED
