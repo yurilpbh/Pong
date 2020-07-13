@@ -52,10 +52,9 @@ function love.load()
     winningPLayer = 0
 
     --Create the paddles (they can only move up or down)
-    paddle1 = PaddleIA(5, 20, 5, 20, PADDLE_SPEED, 0.80)
-    paddle2 = PaddleIA(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 30, 5, 20, PADDLE_SPEED, 1.20)
-    paddle1:save("paddle1Weigths.lua")
-    paddle2:save("paddle2Weigths.lua")
+    paddle1 = PaddleIA(5, 20, 5, 20, PADDLE_SPEED, 0.9)
+    paddle2 = PaddleIA(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 30, 5, 20, PADDLE_SPEED, 1.1)
+    
     --Create the ball
     ball = Ball(VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, 4, 4)
 
@@ -64,7 +63,7 @@ function love.load()
     else
         ball.dx = -100
     end
-
+    paddle1:save("paddleWeigths.lua", ball.dx, ball.dy)
     gameState = 'start'
 end
 
@@ -136,13 +135,13 @@ function love.update(dt)
             servingPlayer = 1
 
             --sounds['point_score']:play()
-            if (player1Score + player2Score)%10 == 0 then
-                paddle1:save("paddle1Weigths.lua")
-                paddle2:save("paddle2Weigths.lua")
-            end
+            --if (player1Score + player2Score)%10 == 0 then
+                paddle1:save("paddleWeigths.lua", ball.dx, ball.dy)
+            --end
             ball:reset()
             ball.dx = 100
-            if player2Score >= 60 then
+            if player2Score >= 10 then
+                paddle1:save("paddleWeigths.lua", ball.dx, ball.dy)
                 gameState = 'victory'
                 winningPLayer = 2
             else
@@ -156,13 +155,13 @@ function love.update(dt)
             servingPlayer = 2
 
             --sounds['point_score']:play()
-            if (player1Score + player2Score)%10 == 0 then
-                paddle1:save("paddle1Weigths.lua")
-                paddle2:save("paddle2Weigths.lua")
-            end
+            --if (player1Score + player2Score)%10 == 0 then
+                paddle1:save("paddleWeigths.lua", ball.dx, ball.dy)
+            --end
             ball:reset()
             ball.dx = -100
-            if player1Score >= 60 then
+            if player1Score >= 10 then
+                paddle1:save("paddleWeigths.lua", ball.dx, ball.dy)
                 gameState = 'victory'
                 winningPLayer = 1
             else
@@ -170,10 +169,10 @@ function love.update(dt)
             end
         end
 
-        if player1Score == 30 then
+        if player1Score == 15 then
             paddle1:changeLR(0.01)
         end
-        if player2Score == 30 then
+        if player2Score == 15 then
             paddle2:changeLR(0.01)
         end
 
