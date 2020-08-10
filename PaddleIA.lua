@@ -1,7 +1,7 @@
 PaddleIA = Class{}
 
-w11, w21, w31, w41, w51, w61, w12, w22, w32, w42, w52, w62 = -79.32, 16128.42, -10.47, -120.76, -7.86, -16234.24, 240.28, -15086.51, -108.01, 470.22, -5.00, 15834.52
-learningRate = 0.05
+w11, w21, w31, w41, w51, w61, w12, w22, w32, w42, w52, w62 = 0,0,0,0,0,0,0,0,0,0,0,0
+learningRate = 0.1
 
 --Initialize a paddle with position (x,y) and size (width,height)
 function PaddleIA:init(x, y, width, height, paddle_speed)
@@ -12,6 +12,7 @@ function PaddleIA:init(x, y, width, height, paddle_speed)
     self.height = height
     self.PADDLE_SPEED = paddle_speed
     self.dy = 0
+    self.iteracao = 0
 end
 
 --Update the position of the paddle
@@ -55,34 +56,35 @@ function updateW(ball, paddle)
         targeto1 = 1
         targeto2 = 1
     end
-    w11 = w11 + learningRate * (targeto1 - o1) * ball.x
+    w11 = w11 + learningRate * (targeto1 - o1) * ball.previousX
     w21 = w21 + learningRate * (targeto1 - o1) * ball.y
-    w31 = w31 + learningRate * (targeto1 - o1) * ball.dx
-    w41 = w41 + learningRate * (targeto1 - o1) * ball.dy
-    w51 = w51 + learningRate * (targeto1 - o1) * paddle.x
+    w31 = w31 + 0 * (targeto1 - o1) * ball.dx
+    w41 = w41 + 0 * (targeto1 - o1) * ball.dy
+    w51 = w51 + 0 * (targeto1 - o1) * paddle.x
     w61 = w61 + learningRate * (targeto1 - o1) * paddle.y
-    w12 = w12 + learningRate * (targeto2 - o2) * ball.x
+    w12 = w12 + learningRate * (targeto2 - o2) * ball.previousX
     w22 = w22 + learningRate * (targeto2 - o2) * ball.y
-    w32 = w32 + learningRate * (targeto2 - o2) * ball.dx
-    w42 = w42 + learningRate * (targeto2 - o2) * ball.dy
-    w52 = w52 + learningRate * (targeto2 - o2) * paddle.x
+    w32 = w32 + 0 * (targeto2 - o2) * ball.dx
+    w42 = w42 + 0 * (targeto2 - o2) * ball.dy
+    w52 = w52 + 0 * (targeto2 - o2) * paddle.x
     w62 = w62 + learningRate * (targeto2 - o2) * paddle.y
 end
 
 function PaddleIA:save(filePath, ball)
     -- Opens a file in read
     file = io.open(filePath, "a+")
-
+    self.iteracao = self.iteracao + 1
     -- sets the default output file as test.lua
     io.output(file)
 
     -- appends a word test to the last line of the file
-    io.write("Previous_X: " .. string.format(", %.2f", ball.previousX) .. ", Actual_X: " .. string.format(", %.2f", ball.x) .. "\n")
-    io.write("Previous_Y: " .. string.format(", %.2f", ball.previousY) .. ", Actual_Y: " .. string.format(", %.2f", ball.y) .. "\n")
-    io.write("Self_P_Y: " .. string.format(", %.2f", self.previous_y) .. ", Self_Y: " .. string.format(", %.2f", self.y) .. "\n")
-    io.write("dx: " .. string.format(", %.2f", ball.dx) .. ", dy: " .. string.format(", %.2f", ball.dy) .. "\n")
-    io.write(string.format("%.2f", w11) .. ", " .. string.format("%.2f", w21) .. ", " .. string.format("%.2f", w31) .. ", " .. string.format("%.2f", w41) .. ", " .. string.format("%.2f", w51) .. ", " .. string.format("%.2f", w61) .. ", ")
-    io.write(string.format("%.2f", w12) .. ", " .. string.format("%.2f", w22) .. ", " .. string.format("%.2f", w32) .. ", " .. string.format("%.2f", w42) .. ", " .. string.format("%.2f", w52) .. ", " .. string.format("%.2f", w62) .. "\n" .. "\n")
+    io.write(string.format("%d", self.iteracao))
+    io.write(string.format(",%.2f", ball.previousX) .. string.format(",%.2f", ball.x))
+    io.write(string.format(",%.2f", ball.previousY) .. string.format(",%.2f", ball.y))
+    io.write(string.format(",%.2f", self.previous_y) .. string.format(",%.2f", self.y))
+    io.write(string.format(",%.2f", ball.dx) .. string.format(",%.2f", ball.dy))
+    io.write(string.format(",%.2f", w11) .. string.format(",%.2f", w21) .. string.format(",%.2f", w31) .. string.format(",%.2f", w41) .. string.format(",%.2f", w51) .. string.format(",%.2f", w61))
+    io.write(string.format(",%.2f", w12) .. string.format(",%.2f", w22) .. string.format(",%.2f", w32) .. string.format(",%.2f", w42) .. string.format(",%.2f", w52) .. string.format(",%.2f\n", w62))
 
     -- closes the open file
     io.close(file)
