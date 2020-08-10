@@ -15,7 +15,7 @@ end
 --Verify a collision between the ball and a box
 function Ball:collides(box)
     if  self.x > box.x + box.width or self.x + self.width < box.x then
-        if ((self.previousY >= box.previous_y and self.previousY + self.height <= box.previous_y + box.height) and 
+        if ((self.previousY + self.height >= box.previous_y and self.previousY <= box.previous_y + box.height) and 
         (self.x + self.width < box.x and self.previousX > box.x + box.width) or (self.x > box.x + box.width and self.previousX + self.width < box.x)) then
             return true
         end
