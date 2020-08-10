@@ -1,11 +1,15 @@
-This project was developed following the class of CS50, Harvad University, by Colton Ogden.
+This project was developed following the class of CS50, Harvad University, by Colton Ogden.\
 The link to the class is: https://cs50.harvard.edu/x/2020/tracks/games/
 
 This is a simple Pong game.
 ![](Pong.gif)
 
+This is the paddles IA's playing the game.
+![](PongIA.gif)
+
 The "Ball.lua" is a class that contains the methods of the ball in the game.\
-The "Paddle.lua" is a class that contains the methods of the paddles in the game.
+The "Paddle.lua" is a class that contains the methods of the paddles in the game.\
+The "PaddleIA.lua" is a class that contains the methods of the IA in the game.
 
 All methods in these class are self-explanatory.
 
